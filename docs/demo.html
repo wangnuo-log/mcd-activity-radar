@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>麦麦活动雷达 · 麦当劳当月活动一屏看完</title>
+<meta name="description" content="麦当劳当月活动雷达：开抢倒计时、联名限定周边、可预约门店活动，基于麦当劳 MCP 数据。">
+<style>
+:root{
+  --red:#DA291C; --yellow:#FFC72C; --ink:#1A1A1A; --muted:#6B6B6B;
+  --bg:#FFFBF5; --card:#FFFFFF; --line:#F1E4D2; --line-soft:#F7EEE2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+a{color:var(--red)}
+
+.hero{background:var(--red);color:#fff;padding:36px 0 40px;position:relative}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--yellow)}
+.brand{display:flex;align-items:center;gap:16px}
+.brand h1{font-size:30px;font-weight:800;letter-spacing:.5px;line-height:1.2}
+.brand .tag{font-size:14px;color:#FFE9B8;margin-top:2px}
+.meta{margin-top:18px;font-size:12.5px;color:#FFD9A0;display:flex;flex-wrap:wrap;gap:6px 18px}
+.meta b{color:#fff;font-weight:600}
+
+.sec{margin-top:34px}
+.sec>h2{font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.sec>h2 .dot{width:4px;height:17px;border-radius:2px;background:var(--red)}
+.sec>h2 .cnt{background:var(--yellow);color:var(--ink);font-size:11.5px;font-weight:700;
+  border-radius:999px;padding:2px 9px;line-height:1.5}
+
+.count-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:13px}
+.count-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--red);
+  border-radius:12px;padding:15px 17px}
+.count-card .t{font-size:12.5px;color:var(--muted);margin-bottom:7px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.count-card .cd{font-size:25px;font-weight:800;color:var(--red);
+  font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.count-card .sm{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:13px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat .n{font-size:24px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.filters button{font:inherit;font-size:12.5px;padding:5px 13px;border-radius:999px;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--muted);transition:.15s}
+.filters button:hover{border-color:var(--red);color:var(--red)}
+.filters button.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+
+.act{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+.act img{width:70px;height:70px;border-radius:10px;object-fit:cover;flex:0 0 auto;background:var(--line-soft)}
+.act .body{min-width:0;flex:1}
+.act .hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:5px}
+.act .ti{font-size:14.5px;font-weight:700;line-height:1.35}
+.act .tx{font-size:12.8px;color:var(--muted);white-space:pre-line;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.act .when{font-size:11.5px;color:var(--red);font-weight:600;margin-top:5px}
+
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;
+  border:1px solid transparent}
+.c-red{background:#FDECEA;color:#B31D12;border-color:#F8CFCA}
+.c-amber{background:#FFF6E0;color:#8A5A00;border-color:#FBE0A8}
+.c-green{background:#EAF6EC;color:#1E6B36;border-color:#CCE7D3}
+.c-purple{background:#F2EDFB;color:#5B3CA6;border-color:#DED2F5}
+.c-blue{background:#EAF2FB;color:#1B5FA8;border-color:#CFE1F5}
+.c-gray{background:#F3F1EE;color:#5F5E5A;border-color:#E2DFD9}
+
+.date-h{font-size:12.5px;font-weight:700;color:var(--muted);margin:16px 0 8px}
+
+table{width:100%;border-collapse:collapse;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px}
+th{background:#FFF4E2;color:#7A4A00;font-size:12px;font-weight:700;text-align:left;padding:10px 13px}
+td{padding:10px 13px;border-top:1px solid var(--line-soft);color:#333;vertical-align:top}
+td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:600}
+td.mut{color:var(--muted);font-size:12.3px}
+
+.acct{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:13px}
+.acct .k{font-size:12px;color:var(--muted)}
+.acct .v{font-size:21px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+.acct .warn{color:var(--red)}
+
+.foot{margin-top:44px;padding:22px 0 0;border-top:1px solid var(--line);
+  font-size:12px;color:var(--muted);text-align:center;line-height:1.9}
+.foot code{background:var(--line-soft);padding:1px 6px;border-radius:5px;font-size:11.5px}
+
+.qian{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#FFFDF8}
+.qian-hd{background:var(--red);color:#fff;padding:13px 18px;display:flex;flex-wrap:wrap;
+  gap:6px 16px;align-items:baseline}
+.qian-hd .gn{font-size:21px;font-weight:800;letter-spacing:2px}
+.qian-hd .gs{font-size:12px;color:#FFE0B0}
+.qian-hd .gt{margin-left:auto;font-size:11.5px;color:#FFD9A0}
+.qian-bd{padding:16px 18px 18px}
+.qian-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
+.qian-tbl th{background:#FFF4E2;color:#7A4A00;font-size:11.5px;font-weight:700;
+  text-align:left;padding:7px 10px}
+.qian-tbl td{padding:7px 10px;border-top:1px solid var(--line-soft);color:#333}
+.qian-tbl .glyph{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#B31D12;
+  letter-spacing:1px;white-space:nowrap}
+.qian-tbl .role{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:var(--red);
+  border-radius:4px;padding:0 4px;margin-left:5px}
+.qian-taste{font-size:13px;color:#444;margin-bottom:12px;line-height:1.75}
+.qian-taste b{color:var(--red)}
+.qian-pick{background:#FFF6E0;border:1px dashed #EFC46B;border-radius:10px;padding:13px 16px}
+.qian-pick .lab{font-size:11.5px;color:#8A5A00;font-weight:700;margin-bottom:6px}
+.qian-pick .m{font-size:16px;font-weight:800;color:var(--red);font-variant-numeric:tabular-nums}
+.qian-pick .m .p{font-size:13px;color:#8A5A00;font-weight:600}
+.qian-pick .alt{font-size:12.5px;color:#6B6B6B;margin-top:7px;line-height:1.8}
+.qian-note{font-size:11px;color:var(--muted);margin-top:11px;line-height:1.7}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap"><div class="brand">
+<svg viewBox="0 0 48 48" width="46" height="46" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="none" stroke="#FFC72C" stroke-width="2.4" opacity=".95"/><circle cx="24" cy="24" r="13.5" fill="none" stroke="#FFC72C" stroke-width="2" opacity=".6"/><circle cx="24" cy="24" r="5" fill="#FFC72C"/><line x1="24" y1="24" x2="39" y2="10" stroke="#FFC72C" stroke-width="3" stroke-linecap="round"/></svg>
+<div><h1>麦麦活动雷达</h1><p class="tag">麦当劳当月活动 · 一屏看完 · 开抢不错过</p></div>
+</div>
+<div class="meta"><span>数据时间 <b>2026-10-09 16:08</b></span><span>数据来源 <b>麦当劳 MCP</b></span><span>非麦当劳官方产品</span></div>
+</div></header>
+<main class="wrap">
+<section class="sec"><h2><span class="dot"></span>开抢倒计时<span class="cnt">3</span></h2><div class="count-grid">
+<div class="count-card"><div class="t">预约麦金喜抽奖，🉐[积分霸王餐]</div><div class="cd">7 小时 52 分钟</div><div class="sm">10-10 00:00 开抢</div></div>
+<div class="count-card"><div class="t">麦当劳 X PEACEMINUSONE</div><div class="cd">5 天 18 小时</div><div class="sm">10-15 10:45 开抢</div></div>
+<div class="count-card"><div class="t">第三周周边即将开售✨限定主题丝巾！</div><div class="cd">12 天 18 小时</div><div class="sm">10-22 10:45 开抢</div></div>
+</div></section>
+<section class="sec"><h2><span class="dot"></span>本次雷达概览</h2><div class="stats">
+<div class="stat"><div class="n">14</div><div class="l">正在进行</div></div>
+<div class="stat"><div class="n">3</div><div class="l">即将到来</div></div>
+<div class="stat"><div class="n">3</div><div class="l">开抢倒计时</div></div>
+<div class="stat"><div class="n">3</div><div class="l">限定周边</div></div>
+<div class="stat"><div class="n">26</div><div class="l">可预约门店活动</div></div>
+</div></section>
+<section class="sec" data-dynamic><h2><span class="dot"></span>活动情报</h2>
+<div class="filters"><button data-cat="all" class="on">全部</button>
+<button data-cat="门店活动">门店活动</button>
+<button data-cat="联名限定">联名限定</button>
+<button data-cat="新品上市">新品上市</button>
+<button data-cat="优惠福利">优惠福利</button>
+<button data-cat="抽奖福利">抽奖福利</button>
+</div>
+<div class="date-h">正在进行 · 14 条</div>
+<article class="act" data-cat="门店活动"><img src="https://cms-cdn.mcd.cn/img/short-content/63bd426f45860fbe26025234054bf773.png" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-green">门店活动</span><span class="ti">乐享90分钟高质量亲子时间</span></div><div class="tx">打造高质量陪伴时光🎊
+9本热门书籍且每月更新！
+更有开心乐园餐+随机玩具一份🎁
+好吃又好玩！快报名参加吧~</div></div></article>
+<article class="act" data-cat="门店活动"><img src="https://cms-cdn.mcd.cn/img/short-content/39e02c45a3b5d9febaf7ac3a5d03f0b9.png" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-green">门店活动</span><span class="ti">快来一起参加麦麦派对吧！</span></div><div class="tx">遛娃好去处🎉麦当劳趣读派对！
+6大环节，趣味互动✨
+好吃又好玩，快乐持续加倍！
+👇一起领取“读书小达人“证书吧~</div></div></article>
+<article class="act" data-cat="门店活动"><img src="https://cms-cdn.mcd.cn/img/short-content/fd3efb9e2c3a89ba6aa8dfa4676aa333.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-green">门店活动</span><span class="ti">过家家派对上线，快来一起解锁梦想职业</span></div><div class="tx">过家家派对就要开始啦!
+萌娃cosplay梦想职业，精美职业服带回家
+DIY 创意手工，想象力在指尖自由绽放
+9月9日到店解锁过家家派对
+粉红姐姐带你玩转麦当劳，开启童趣一天~</div></div></article>
+<article class="act" data-cat="联名限定"><img src="https://cms-cdn.mcd.cn/img/short-content/689d30bef705f848fe1fd3cfc0f419b2.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-red">联名限定</span><span class="ti">麦当劳 X PEACEMINUSONE</span></div><div class="tx">GD同款联名复古棒球帽
+任意餐品消费加39.9元即可得
+经典红黄配色搭配复古轮廓，MV同款灵感重现
+更有标志性小雏菊刺绣图案点缀
+10月8日10:45开售
+更有APP专享积分抢先购10:40开抢
+与GD一起探索潮流新篇章🖤</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/76fc2955b74f7c69121d5299a0047ae1.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">早餐爆款回归，快来pick你的厚松饼堡！📣</span></div><div class="tx">返工别紧张，厚松饼堡让你松软一下🫵
+🥞甜甜松饼，软软口感
+🍁经典枫糖风味和浓郁巧克力味两款可选🍫
+10月8日起，指定套餐可享早餐卡6折优惠
+3件套到手只要15元起，快来优惠吃</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/01acad0d43f6f5c062d58eecd375e167.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">韩式风味蘸酱上新❤️就「酱」心有所「薯」</span></div><div class="tx">🆕韩式辣椒黄油风味酱
+韩式辣酱碰撞青梅，裹挟黄油香气
+鸡薯双全盒仅需15.9元起✨getGD同款花式比心
+🆕韩式烟熏芝士风味酱
+浓郁芝香邂逅韩式香辛风味，烟熏香气层层释放
+蘸酱炸鸡仅需11.9元起🍗
+炸鸡薯饼蘸酱我全都喜欢！
+10月8日 10:30起正式开售⏰</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/25809373fbf2e5f9bb9699195149b88a.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">麦当劳联动G-DRAGON</span></div><div class="tx">带来韩式风味系列新品❗️
+龙焰鸡腿堡三件套 26.9 元起即刻开吃🍔
+韩式辣酱搭配酥脆多汁鸡腿排🤤
+还可升级29.9元龙焰芝士棒鸡腿堡三件套，
+两根马苏里拉拉丝芝士条，热时双倍拉丝更过瘾🧀
+10月8日 10:30 准时开售⏰You lovin&#x27; it？</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/6142c8e169c5c3a97bf90047ca446a46.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">🍫麦咖啡13.9r浓浓黑巧来啦！</span></div><div class="tx">地道浓醇黑巧，风味浓郁醇厚
+200目精细研磨工艺，触感丝滑如绒
+戳下方，速来解锁！</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/5236ca16c841a90eadb0daf4758a2945.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">🩶灰白撞色，灰焰圆筒酷爽登场</span></div><div class="tx">🩶灰焰圆筒酷爽上新！
+🍦浓郁香草味碰上酷灰脆筒，灰白撞色吸睛。
+✨入口绵密丝滑，一口咬下筒壳咔嚓酥脆。
+😋绵密与香脆层层交织，一口解锁甜酷反差！
+还在等什么，马上尝新~</div></div></article>
+<article class="act" data-cat="新品上市"><img src="https://cms-cdn.mcd.cn/img/short-content/105121c86e1023b6cc4b7fb4754ca145.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-amber">新品上市</span><span class="ti">🫐一口爆汁！蓝莓爆爆珠麦旋风上新</span></div><div class="tx">🫐蓝莓爆爆珠麦旋风上新！
+💜清甜蓝莓碰上醇厚奶香，酸甜清爽。
+💥真实蓝莓原浆x爆爆珠，颗颗爆汁好惊喜。
+😋绵密冰淇淋撞上弹爽口感，莓好滋味层层爆开！
+还在等什么，马上尝新~</div></div></article>
+<article class="act" data-cat="优惠福利"><img src="https://cms-cdn.mcd.cn/img/short-content/b6da228249fab7761748bb6e24c50f93.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-blue">优惠福利</span><span class="ti">“韩”风刮到了四件套~龙焰鸡腿堡来袭！</span></div><div class="tx">🍔麦金卡点「龙焰鸡腿堡」四件套29元起
+🍗韩式辣酱碰撞青梅黄油，爆脆鸡腿排多汁裹酱！
+✨一张麦金卡包揽全天吃麦特权
+6折早餐、9.9元麦咖啡、满额免配统统安排
+😋快来打卡美味，这场韩式盛宴等你加入！</div></div></article>
+<article class="act" data-cat="优惠福利"><img src="https://cms-cdn.mcd.cn/img/short-content/99e637e8b965cbb7895e102b5c25b0c2.png" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-blue">优惠福利</span><span class="ti">学生专属！49元150天麦金学期卡💳</span></div><div class="tx">💰仅0.33元/天，到手150天吃麦特权！
+5️⃣折起吃超值四件套、6折吃早餐
+🛵每日两次满额免配，9.9元麦咖啡
+🦉开卡还送多邻国月卡，美味和学习一步到位
+👛新学期钱包不吃紧，开心吃麦快乐学习！</div></div></article>
+<article class="act" data-cat="优惠福利"><img src="https://cms-cdn.mcd.cn/img/short-content/553a0a73cd1eacee7212515b7b071b90.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-blue">优惠福利</span><span class="ti">超值𝟗.𝟗元早餐两件套陪你开工啦😋</span></div><div class="tx">早八的快乐，一堡一咖已就位🍔☕
+𝟏𝟎月𝟖日至𝟏𝟎月𝟐𝟏日
+🍔周一至周五早餐堡轮流上早班
+🤩今天这堡 明天那堡
+☕鲜萃咖啡搭档到位
+凭券两件套只要9.9元
+速戳👇快定好闹钟一起来吃</div></div></article>
+<article class="act" data-cat="优惠福利"><img src="https://cms-cdn.mcd.cn/img/short-content/0c9f4ae90aa1481bd5275588a0456869.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-blue">优惠福利</span><span class="ti">麦咖啡一早现磨🥳元气早餐震撼来袭！</span></div><div class="tx">☕甄选 2024IIAC 国际咖啡品鉴大赛“金奖“咖啡豆
+🥪多款人气早餐主食随心挑选，满足你的多种需求
+✨清晨能量一键配齐，14.9元起，开启你的元气一天</div></div></article>
+<div class="date-h">即将到来 · 3 条</div>
+<div class="date-h">10 月 10 日</div>
+<article class="act" data-cat="抽奖福利"><img src="https://cms-cdn.mcd.cn/img/short-content/5be1d91c50beb6d04cf8185055fa92a5.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-purple">抽奖福利</span><span class="ti">预约麦金喜抽奖，🉐[积分霸王餐]</span></div><div class="tx">宝子😸天上不会掉馅饼
+😆但麦麦会掉落免费汉堡~
+💪麦金喜抽奖吃[积分霸王餐]
+🍔免费龙焰鸡腿堡/麦辣鸡腿堡
+抽奖时间：10月10日 00:00开始⏰速戳预约！</div><div class="when">10-10 00:00 · 还有 7 小时 52 分钟</div></div></article>
+<div class="date-h">10 月 15 日</div>
+<article class="act" data-cat="联名限定"><img src="https://cms-cdn.mcd.cn/img/short-content/3120858b8460868281cdc39f9aae1578.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-red">联名限定</span><span class="ti">麦当劳 X PEACEMINUSONE</span></div><div class="tx">周边第二弹——联名徽章即将发售
+任意餐品消费加39.9元即可得
+集结MCD爱心、小雏菊和经典薯条元素🍟
+一套三枚🖤限量珍藏
+10月15日10:45开售
+更有APP专享积分抢先购10:40开抢</div><div class="when">10-15 10:45 · 还有 5 天 18 小时</div></div></article>
+<div class="date-h">10 月 22 日</div>
+<article class="act" data-cat="联名限定"><img src="https://cms-cdn.mcd.cn/img/short-content/fb40c37c172886ee1235c2ed21f3bde4.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="body"><div class="hd"><span class="badge c-red">联名限定</span><span class="ti">第三周周边即将开售✨限定主题丝巾！</span></div><div class="tx">丝巾搭配棒球帽的潮流谁懂😎
+麦当劳「我就喜欢」限定丝巾
+任意餐品消费加 39.9 元即可得
+颈间、包袋、手腕、头饰一巾多玩🤔
+叠搭联名棒球帽&amp;徽章随心玩出专属潮流造型✨
+10月22日10:45开售
+更有APP专享积分抢先购10:40开抢
+get时尚icon同款潮流造型</div><div class="when">10-22 10:45 · 还有 12 天 18 小时</div></div></article>
+</section>
+<section class="sec"><h2><span class="dot"></span>今日手气 · 麦门签<span class="cnt">娱乐</span></h2><div class="qian"><div class="qian-hd"><span class="gn">泽雷随</span><span class="gs">震宫 · 三爻世 → 水雷屯</span><span class="gt">2026-10-09 · 月建戌 · 丙辰日</span></div><div class="qian-bd"><table class="qian-tbl"><thead><tr><th>爻位</th><th>六神</th><th>六亲</th><th>纳支</th><th>卦画</th></tr></thead><tbody><tr><td>上爻<span class="role">应</span></td><td>青龙</td><td>妻财</td><td>未土</td><td class="glyph">▅▅ ▅▅</td></tr><tr><td>五爻</td><td>玄武</td><td>官鬼</td><td>酉金</td><td class="glyph">▅▅▅▅▅</td></tr><tr><td>四爻</td><td>白虎</td><td>父母</td><td>亥水</td><td class="glyph">▅▅▅▅▅ ○</td></tr><tr><td>三爻<span class="role">世</span></td><td>螣蛇</td><td>妻财</td><td>辰土</td><td class="glyph">▅▅ ▅▅</td></tr><tr><td>二爻</td><td>勾陈</td><td>兄弟</td><td>寅木</td><td class="glyph">▅▅ ▅▅</td></tr><tr><td>初爻</td><td>朱雀</td><td>父母</td><td>子水</td><td class="glyph">▅▅▅▅▅</td></tr></tbody></table><div class="qian-taste">世爻五行 <b>土</b>，六神 <b>螣蛇</b> → 今日手气 <b>甜蜜</b>。<br>土气缠绵，主甜腻 —— 适合甜品与冰品</div><div class="qian-pick"><div class="lab">天意之选</div><div class="m">圆筒冰淇淋 <span class="p">¥5</span></div><div class="alt">另有两只备选：椰奶雪冰 ¥27 · 新地 ¥14.5</div></div><div class="qian-note">玩法说明：以传统卦象作为<b>随机符号</b>的娱乐性选餐游戏，不做占卜与预测，不构成任何建议；餐品价格与供应以门店实时为准。</div></div></div></section>
+<section class="sec"><h2><span class="dot"></span>限定周边<span class="cnt">3</span></h2>
+<table><thead><tr><th>商品</th><th>积分</th><th>卖点</th><th>兑换窗口</th></tr></thead><tbody>
+<tr><td><b>罗技键鼠套装</b></td><td class="num">6666</td><td class="mut">积分兑大礼，罗技键鼠套装6666积分兑换！8月17日-8月21日，每日限量 5 份，先到先得</td><td class="mut">2026-08-21 ~ 2026-08-21</td></tr>
+<tr><td><b>Nike Book 2 麦当劳特别联名款</b></td><td class="num">8888</td><td class="mut">独一无二，梦幻联动，Nike Book 2 麦当劳特别联名款 每人限购一双，每日 14:00 准时开抢</td><td class="mut">2026-06-05 ~ 2026-06-05</td></tr>
+<tr><td><b>酸黄瓜吧唧礼盒</b></td><td class="num">800</td><td class="mut">800 积分兑换酸黄瓜吧唧礼盒！ 8.12 限量 150 份｜8.13 限量 100 份｜8.14 限量 100 份，先兑先得</td><td class="mut">2026-08-14 ~ 2026-08-14</td></tr>
+</tbody></table></section>
+<section class="sec"><h2><span class="dot"></span>可预约门店活动<span class="cnt">26</span></h2>
+<table><thead><tr><th>活动</th><th>类目</th><th>价格</th><th>spuId</th></tr></thead><tbody>
+<tr><td>麦当劳亲子读书会</td><td class="mut">读书会</td><td class="num">¥45</td><td class="mut">1830</td></tr>
+<tr><td>麦当劳奇妙生日派对</td><td class="mut">生日类派对</td><td class="num">¥50</td><td class="mut">1779</td></tr>
+<tr><td>麦当劳一起开心鸭尊享版生日派对</td><td class="mut">生日类派对</td><td class="num">¥138</td><td class="mut">8516</td></tr>
+<tr><td>迪士尼奇妙生日探索之旅</td><td class="mut">生日类派对</td><td class="num">¥45</td><td class="mut">1065</td></tr>
+<tr><td>麦当劳过家家派对尊享版</td><td class="mut">主题类派对</td><td class="num">¥118</td><td class="mut">11308</td></tr>
+<tr><td>万马奔腾开心派对常规版</td><td class="mut">主题类派对</td><td class="num">¥58</td><td class="mut">15276</td></tr>
+<tr><td>四小福永远好朋友派对豪华版</td><td class="mut">主题类派对</td><td class="num">¥88</td><td class="mut">3087</td></tr>
+<tr><td>麦当劳趣读派对2025</td><td class="mut">主题类派对</td><td class="num">¥45</td><td class="mut">10675</td></tr>
+<tr><td>麦当劳海底小纵队欢乐派对（常规版）</td><td class="mut">主题类派对</td><td class="num">¥58</td><td class="mut">17356</td></tr>
+<tr><td>开心特工派对 之 深海探秘</td><td class="mut">主题类派对</td><td class="num">¥198</td><td class="mut">6971</td></tr>
+<tr><td>麦麦奇妙夜捣蛋派对尊享版</td><td class="mut">主题类派对</td><td class="num">¥128</td><td class="mut">13495</td></tr>
+<tr><td>麦当劳过家家派对</td><td class="mut">主题类派对</td><td class="num">¥55</td><td class="mut">6370</td></tr>
+<tr><td>麦当劳狂欢生日派对 迪士尼疯狂动物城主题（尊享版）</td><td class="mut">生日类派对</td><td class="num">¥98</td><td class="mut">5247</td></tr>
+<tr><td>麦当劳狂欢生日派对 迪士尼疯狂动物城主题</td><td class="mut">生日类派对</td><td class="num">¥58</td><td class="mut">5224</td></tr>
+<tr><td>麦当劳一起开心鸭生日派对</td><td class="mut">生日类派对</td><td class="num">¥50</td><td class="mut">8084</td></tr>
+<tr><td>四小福永远好朋友派对常规版</td><td class="mut">主题类派对</td><td class="num">¥58</td><td class="mut">3089</td></tr>
+<tr><td>万马奔腾开心派对尊享版</td><td class="mut">主题类派对</td><td class="num">¥138</td><td class="mut">15279</td></tr>
+<tr><td>麦当劳海底小纵队欢乐派对（尊享版）</td><td class="mut">主题类派对</td><td class="num">¥88</td><td class="mut">17357</td></tr>
+<tr><td>麦麦奇妙夜捣蛋派对常规版</td><td class="mut">主题类派对</td><td class="num">¥58</td><td class="mut">13496</td></tr>
+<tr><td>麦当劳趣读派对</td><td class="mut">主题类派对</td><td class="num">¥45</td><td class="mut">5643</td></tr>
+<tr><td>一年一度品虾会</td><td class="mut">品鉴会</td><td class="num">¥25.9</td><td class="mut">15146</td></tr>
+<tr><td>金拱门板记尝新会</td><td class="mut">品鉴会</td><td class="num">¥29.9</td><td class="mut">16133</td></tr>
+<tr><td>麦咖啡™奶铁品鉴会</td><td class="mut">品鉴会</td><td class="num">¥25</td><td class="mut">1670</td></tr>
+<tr><td>消防体验营</td><td class="mut">品鉴会</td><td class="num">¥72</td><td class="mut">12907</td></tr>
+<tr><td>小小牙医体验营</td><td class="mut">品鉴会</td><td class="num">¥72</td><td class="mut">16158</td></tr>
+<tr><td>职业体验营</td><td class="mut">品鉴会</td><td class="num">¥72</td><td class="mut">12897</td></tr>
+</tbody></table></section>
+<section class="sec"><h2><span class="dot"></span>你的账户</h2><div class="acct">
+<div class="stat"><div class="k">可用积分</div><div class="v">61.8</div></div>
+<div class="stat"><div class="k">累计积分</div><div class="v">6424.8</div></div>
+<div class="stat"><div class="k">已过期积分</div><div class="v warn">5581</div></div>
+</div></section>
+</main>
+<footer class="foot"><div class="wrap">本页面为麦当劳程序员节创意开发大赛参赛作品，由参赛者独立开发，<b>非麦当劳官方产品</b>。<br>餐品信息、价格及供应状态以麦当劳官方渠道的实时结果为准。<br><code>python radar_cli.py --demo --html &gt; demo.html</code> · 由 <code>radar_html.py</code> 生成</div></footer>
+<script>
+document.querySelectorAll('.filters button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var c=b.dataset.cat;
+    document.querySelectorAll('.filters button').forEach(function(x){
+      x.classList.toggle('on',x===b);});
+    document.querySelectorAll('.act').forEach(function(el){
+      el.style.display=(c==='all'||el.dataset.cat===c)?'':'none';});
+    document.querySelectorAll('.sec[data-dynamic]').forEach(function(s){
+      var vis=s.querySelectorAll('.act').length;
+      var shown=0;
+      s.querySelectorAll('.act').forEach(function(e){
+        if(e.style.display!=='none'){shown++;}});
+      s.style.display=(shown>0||c==='all')?'':'none';});
+  });
+});
+</script>
+</body>
+</html>

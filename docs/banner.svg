@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200" role="img">
+<title>麦麦活动雷达 MCD Activity Radar</title>
+<rect x="0" y="0" width="720" height="200" rx="16" fill="#27251F"/>
+<circle cx="72" cy="100" r="34" fill="none" stroke="#FFC72C" stroke-width="3"/>
+<circle cx="72" cy="100" r="22" fill="none" stroke="#DA291C" stroke-width="3"/>
+<circle cx="72" cy="100" r="10" fill="#FFC72C"/>
+<line x1="72" y1="100" x2="128" y2="44" stroke="#FFC72C" stroke-width="3" stroke-linecap="round"/>
+<circle cx="128" cy="44" r="6" fill="#DA291C"/>
+<path d="M140 150 A40 40 0 0 1 220 150" fill="none" stroke="#DA291C" stroke-width="2" opacity="0.6"/>
+<path d="M160 150 A20 20 0 0 1 200 150" fill="none" stroke="#DA291C" stroke-width="2" opacity="0.6"/>
+<text x="176" y="86" font-family="'Microsoft YaHei',sans-serif" font-size="34" font-weight="bold" fill="#FFFFFF">麦麦活动雷达</text>
+<text x="178" y="122" font-family="'Microsoft YaHei',sans-serif" font-size="17" fill="#FFC72C">MCD Activity Radar</text>
+<text x="178" y="150" font-family="'Microsoft YaHei',sans-serif" font-size="13" fill="#B4B2A9">新品 · 联名限定 · 优惠 · 门店活动 · 开抢倒计时</text>
+</svg>
