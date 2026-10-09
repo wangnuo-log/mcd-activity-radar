@@ -8,9 +8,9 @@
   python radar_cli.py --live                     # 接入真实麦当劳 MCP（需 MCD_MCP_TOKEN）
   python radar_cli.py --live --only 联名限定      # 只看某一类情报
   python radar_cli.py --demo --today 2026-10-20
-  python radar_cli.py --fortune                  # 只出「今日手气·麦门签」（娱乐彩蛋）
-  python radar_cli.py --fortune --seed 20261009  # 固定种子，起卦可复现
-  python radar_cli.py --demo --no-fortune        # 雷达输出中不带手气签
+  python radar_cli.py --fortune                  # 只出「今日手气·随机选餐」（娱乐彩蛋）
+  python radar_cli.py --fortune --seed 20261009  # 固定种子，结果可复现
+  python radar_cli.py --demo --no-fortune        # 雷达输出中不带随机选餐彩蛋
 """
 import argparse
 import json
@@ -76,9 +76,9 @@ def main():
     ap.add_argument("--html", action="store_true", help="输出麦当劳风格单文件 HTML")
     ap.add_argument("--out", help="输出写入指定文件（UTF-8），不填则打印到终端")
     ap.add_argument("--categories", action="store_true", help="列出全部情报类别后退出")
-    ap.add_argument("--fortune", action="store_true", help="只出「今日手气·麦门签」（娱乐向选餐彩蛋）")
-    ap.add_argument("--no-fortune", action="store_true", help="雷达输出中不附带手气签")
-    ap.add_argument("--seed", type=int, help="起卦种子（同 seed 可复现同一签）")
+    ap.add_argument("--fortune", action="store_true", help="只出「今日手气·随机选餐」（娱乐向选餐彩蛋）")
+    ap.add_argument("--no-fortune", action="store_true", help="雷达输出中不附带随机选餐彩蛋")
+    ap.add_argument("--seed", type=int, help="抽样种子（同 seed 可复现同一结果）")
     args = ap.parse_args()
 
     if args.categories:

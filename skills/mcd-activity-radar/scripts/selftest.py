@@ -160,8 +160,12 @@ class TestRadar(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 今日手气 · 麦门签（六爻引擎）
+# 今日手气 · 随机选餐（确定性引擎）
 # ---------------------------------------------------------------------------
+
+# 合规红线用词：任何渲染输出中都不得出现（覆盖 markdown 与 HTML 两条链路）
+_FORBIDDEN = ("占卜", "预测", "运势", "吉凶", "算命", "灵验",
+              "天意", "求签", "麦门签", "起卦")
 
 _MENU = None
 
@@ -259,7 +263,7 @@ class TestFortunePick(unittest.TestCase):
         h, p = Q.build_and_pick(dt=NOW, seed=5, meals=_menu())
         md = Q.render_markdown(h, p)
         self.assertIn("今日手气", md)
-        self.assertIn("天意之选", md)
+        self.assertIn("随机之选", md)
 
     def test_json_serializable(self):
         import json
@@ -267,11 +271,19 @@ class TestFortunePick(unittest.TestCase):
         json.dumps({"hexagram": h, "pick": p}, ensure_ascii=False)
 
     def test_compliance_no_divination_words(self):
-        # 合规红线：输出中不得出现占卜/预测类措辞
+        # 合规红线：markdown 输出不得出现占卜 / 预测 / 迷信类措辞
         h, p = Q.build_and_pick(dt=NOW, seed=5, meals=_menu())
         md = Q.render_markdown(h, p)
-        for w in ("占卜", "预测", "运势", "吉凶", "算命", "灵验"):
+        for w in _FORBIDDEN:
             self.assertNotIn(w, md)
+
+    def test_compliance_no_divination_words_html(self):
+        # 同一条红线覆盖 HTML 渲染器（此前为测试盲区）
+        import radar_html
+        h, p = Q.build_and_pick(dt=NOW, seed=5, meals=_menu())
+        html = radar_html._fortune_block(h, p)
+        for w in _FORBIDDEN:
+            self.assertNotIn(w, html)
 
 
 if __name__ == "__main__":

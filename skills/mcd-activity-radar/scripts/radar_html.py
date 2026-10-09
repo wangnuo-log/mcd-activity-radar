@@ -187,7 +187,7 @@ _POSN = ["", "初爻", "二爻", "三爻", "四爻", "五爻", "上爻"]
 def _fortune_block(hexa, pick):
     b = hexa["ben"]
     arrow = (" → " + hexa["bian"]["name"]) if hexa.get("bian") else ""
-    L = ['<section class="sec"><h2><span class="dot"></span>今日手气 · 麦门签'
+    L = ['<section class="sec"><h2><span class="dot"></span>今日手气 · 随机选餐'
          '<span class="cnt">娱乐</span></h2>', '<div class="qian">']
     L.append('<div class="qian-hd"><span class="gn">%s</span>'
              '<span class="gs">%s宫 · %s世%s</span>'
@@ -214,12 +214,12 @@ def _fortune_block(hexa, pick):
 
     m = pick["main"]
     alts = " · ".join("%s ¥%s" % (esc(a["name"]), esc(a["price"])) for a in pick["alts"])
-    L.append('<div class="qian-pick"><div class="lab">天意之选</div>'
+    L.append('<div class="qian-pick"><div class="lab">随机之选</div>'
              '<div class="m">%s <span class="p">¥%s</span></div>'
              '<div class="alt">另有两只备选：%s</div></div>'
              % (esc(m["name"]), esc(m["price"]), alts))
     L.append('<div class="qian-note">玩法说明：以传统卦象作为<b>随机符号</b>的娱乐性选餐游戏，'
-             '不做占卜与预测，不构成任何建议；餐品价格与供应以门店实时为准。</div>')
+             '不构成任何建议；餐品价格与供应以门店实时为准。</div>')
     L.append("</div></div></section>")
     return "".join(L)
 
@@ -228,7 +228,7 @@ def render_fortune_only(hexa, pick):
     """只输出「今日手气」的独立单文件 HTML。"""
     L = ["<!DOCTYPE html>", '<html lang="zh-CN">', "<head>", '<meta charset="utf-8">',
          '<meta name="viewport" content="width=device-width,initial-scale=1">',
-         "<title>今日手气 · 麦门签</title>", "<style>%s</style>" % STYLE, "</head>",
+         "<title>今日手气 · 随机选餐</title>", "<style>%s</style>" % STYLE, "</head>",
          "<body>", '<main class="wrap" style="padding-top:30px">',
          _fortune_block(hexa, pick), "</main>", "</body>", "</html>"]
     return "\n".join(L)

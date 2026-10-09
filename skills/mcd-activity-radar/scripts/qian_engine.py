@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-"""麦麦手气签 · 确定性六爻装卦引擎
+"""麦麦随机选餐彩蛋 · 确定性装卦（查表）引擎
 
 定位（合规边界，务必遵守）
 ------------------------
 本模块把中国传统易学「京房纳甲」体系的卦象当作一种**随机符号**，
 为「今天吃什么」这类选择困难提供有仪式感的趣味玩法。
-它是一个**娱乐性的随机选餐游戏**，不做任何占卜、预测或吉凶判断，
+它是一个**娱乐性的随机选餐游戏**，不提供任何预测性结论，
 输出结果不构成任何形式的建议。
 
 技术说明
 --------
-起卦与装卦全部是查表型确定性计算（随机数之外无任何启发式），
+抽样与装卦全部是查表型确定性计算（随机数之外无任何启发式），
 不依赖大模型心算，保证同一输入（日期 + 种子）完全可复现。
 
 规则依据：京房纳甲体系，属传统易学公开常数。
@@ -144,11 +144,11 @@ def month_zhi(dt):
 
 
 # ---------------------------------------------------------------------------
-# 四、起卦与装卦
+# 四、抽样与装卦
 # ---------------------------------------------------------------------------
 
 def toss(seed=None):
-    """铜钱起卦：三枚铜钱掷六次（初爻 -> 上爻）。seed 固定则结果可复现。"""
+    """确定性抽样：模拟三枚铜钱掷六次（初爻 -> 上爻）。seed 固定则结果可复现。"""
     rnd = random.Random(seed)
     lines = []
     for i in range(6):
@@ -185,7 +185,7 @@ def _liuqin(wuxing, base):
 
 
 def build(dt=None, seed=None, lines=None):
-    """起卦 + 装卦，返回完整卦盘（确定性）。lines 可显式传入以便测试。"""
+    """抽样 + 装卦，返回完整卦盘（确定性）。lines 可显式传入以便测试。"""
     dt = dt or datetime.now()
     lines = lines if lines is not None else toss(seed)
     bits = [l["yang"] for l in lines]
@@ -289,7 +289,7 @@ def _stable_pick(cands, hexa, salt=0):
 
 
 def pick_meal(hexa, meals):
-    """按卦象（世爻六神为主线）从真实菜单选出「天意之选」。"""
+    """按卦象（世爻六神为主线）从真实菜单选出「随机之选」。"""
     shi_line = hexa["six"][hexa["ben"]["shi"] - 1]
     shen, wuxing = shi_line["shen"], shi_line["wuxing"]
     taste = LIUSHEN_TASTE[shen]
@@ -334,9 +334,9 @@ def load_menu(path=None):
 def render_markdown(hexa, pick):
     b = hexa["ben"]
     lines = []
-    lines.append("# 今日手气 · 麦门签")
+    lines.append("# 今日手气 · 随机选餐")
     lines.append("")
-    lines.append("> %s（%s）| 月建：%s | 日辰：%s | 起卦：铜钱法" %
+    lines.append("> %s（%s）| 月建：%s | 日辰：%s | 抽样：确定性随机" %
                  (hexa["date"], hexa["weekday"], hexa["month_zhi"], hexa["day_gz"]))
     lines.append("")
 
@@ -369,7 +369,7 @@ def render_markdown(hexa, pick):
     lines.append("")
 
     # 推荐
-    lines.append("## 天意之选")
+    lines.append("## 随机之选")
     lines.append("")
     m = pick["main"]
     lines.append("1. **%s** ¥%s  · %s" % (m["name"], m["price"], m["category"]))
