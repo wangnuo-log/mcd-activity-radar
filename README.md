@@ -237,6 +237,17 @@ MIT License，详见 [LICENSE](LICENSE)。
 
 ---
 
+## 🔗 姊妹项目
+
+| 项目 | 定位 | 状态 |
+|---|---|---|
+| [mcd-activity-radar](.) | **面向未来**：活动聚合、开抢倒计时 | 本项目 · [Issue #37](https://github.com/M-China/mcd-developer-innovation-challenge/issues/37) |
+| [mcd-wrapped](https://github.com/wangnuo-log/mcd-wrapped) | **面向过去**：历史订单年度复盘、麦麦人格标签 | 已参赛 · [Issue #533](https://github.com/M-China/mcd-developer-innovation-challenge/issues/533) |
+
+两个项目共用同一套 MCP Token、同一个 mcd-mcp 连接器配置，互相留了入口。
+
+---
+
 ### 如果这个雷达帮你抢到过一次限定，点个 ⭐ Star 吧！
 
 **本项目为麦当劳程序员节创意开发大赛参赛作品，由参赛者独立开发，非麦当劳官方产品。**
